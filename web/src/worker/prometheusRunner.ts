@@ -17,8 +17,24 @@ type LuaFactoryConstructor = new (
 let luaFactoryCtorPromise: Promise<LuaFactoryConstructor> | null = null
 
 function resolveWasmUri(wasmUrl: string): string {
-  if (typeof process !== "undefined" && process.versions?.node && wasmUrl.startsWith("/@fs/")) {
-    return wasmUrl.slice("/@fs".length)
+  if (typeof process !== "undefined" && process.versions?.node) {
+    // Vite 7 exposed `/@fs/<abs>` in dev/test; Vite 8 exposes the raw absolute
+    // path (which on Windows starts with a `/` before the drive letter, e.g.
+    // `/C:/…`). In both cases Node's `fs` needs a plain filesystem path.
+    let path = wasmUrl.startsWith("/@fs/") ? wasmUrl.slice("/@fs".length) : wasmUrl
+
+    if (path.startsWith("file://")) {
+      try {
+        return new URL(path).pathname.replace(/^\/([A-Za-z]:)/, "$1")
+      } catch {
+        // fall through
+      }
+    }
+
+    // Strip the leading `/` in front of a Windows drive letter (`/C:/…` → `C:/…`).
+    path = path.replace(/^\/([A-Za-z]:)/, "$1")
+
+    return path
   }
 
   return wasmUrl
