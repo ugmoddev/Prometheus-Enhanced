@@ -16,10 +16,10 @@ export default defineConfig(({ command }) => {
   }
 
   return {
-    // Use repo base path for production/preview, but root path for local dev.
+    // Use this repository's Pages base path for production, but root for local dev.
     // This keeps runtime asset URLs (including Wasm files loaded by dependencies)
     // valid in both environments.
-    base: isDevServer ? "/" : "/Prometheus/",
+    base: isDevServer ? "/" : "/Prometheus-Enhanced/",
     plugins: [
       {
         name: "serve-docs-index-directly",
