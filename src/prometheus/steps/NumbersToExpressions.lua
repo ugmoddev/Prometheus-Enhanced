@@ -54,6 +54,10 @@ local function generateModuloExpression(n)
 	return lhs, rhs
 end
 
+local function isFiniteNumber(value)
+	return type(value) == "number" and value == value and value ~= math.huge and value ~= -math.huge
+end
+
 local function contains(table, value)
 	for _, v in ipairs(table) do
 		if v == value then
@@ -65,8 +69,9 @@ end
 
 function NumbersToExpressions:init(_)
 	self.ExpressionGenerators = {
-		function(val, depth) -- Addition
-			local val2 = math.random(-2 ^ 20, 2 ^ 20)
+			function(val, depth) -- Addition
+				if not isFiniteNumber(val) then return false end
+				local val2 = math.random(-2 ^ 20, 2 ^ 20)
 			local diff = val - val2
 			if tonumber(tostring(diff)) + tonumber(tostring(val2)) ~= val then
 				return false
@@ -78,8 +83,9 @@ function NumbersToExpressions:init(_)
 			)
 		end,
 
-		function(val, depth) -- Subtraction
-			local val2 = math.random(-2 ^ 20, 2 ^ 20)
+			function(val, depth) -- Subtraction
+				if not isFiniteNumber(val) then return false end
+				local val2 = math.random(-2 ^ 20, 2 ^ 20)
 			local diff = val + val2
 			if tonumber(tostring(diff)) - tonumber(tostring(val2)) ~= val then
 				return false
@@ -91,9 +97,11 @@ function NumbersToExpressions:init(_)
 			)
 		end,
 
-		function(val, depth) -- Modulo
-			local lhs, rhs = generateModuloExpression(val)
-			if tonumber(tostring(lhs)) % tonumber(tostring(rhs)) ~= val then
+			function(val, depth) -- Modulo
+				if not isFiniteNumber(val) then return false end
+				local lhs, rhs = generateModuloExpression(val)
+				local lhsNumber, rhsNumber = tonumber(tostring(lhs)), tonumber(tostring(rhs))
+				if not lhsNumber or not rhsNumber or rhsNumber == 0 or lhsNumber % rhsNumber ~= val then
 				return false
 			end
 			return Ast.ModExpression(
@@ -106,6 +114,9 @@ function NumbersToExpressions:init(_)
 end
 
 function NumbersToExpressions:CreateNumberExpression(val, depth)
+	if not isFiniteNumber(val) then
+		return Ast.NumberExpression(val)
+	end
 	if depth > 0 and math.random() >= self.InternalThreshold or depth > 15 then
 		local format = self.AllowedNumberRepresentations[math.random(1, #self.AllowedNumberRepresentations)]
 		if not self.NumberRepresentationMutation then
@@ -177,7 +188,7 @@ function NumbersToExpressions:apply(ast)
 	end
 
 	visitast(ast, nil, function(node, _)
-		if node.kind == AstKind.NumberExpression then
+			if node.kind == AstKind.NumberExpression and isFiniteNumber(node.value) then
 			if math.random() <= self.Threshold then
 				return self:CreateNumberExpression(node.value, 0)
 			end
