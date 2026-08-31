@@ -203,7 +203,6 @@ return function(Compiler)
 
             local block = { id = id, index = i, block = Ast.Block(blockstats, block.scope) }
             table.insert(blocks, block);
-            blocks[id] = block;
         end
 
         table.sort(blocks, function(a, b) return a.id < b.id end);
