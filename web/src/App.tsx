@@ -41,8 +41,6 @@ import {
 const initialSource = `local message = "Hello, World!"
 print(message)
 `
-const WORKER_TIMEOUT_MS = 90_000
-
 type ActiveJob = "idle" | "obfuscate" | "run-input" | "run-output"
 type SharePayload = {
   version: 1
@@ -242,16 +240,11 @@ export default function App() {
             return
           }
           settled = true
-          window.clearTimeout(timeout)
           worker?.removeEventListener("message", listener)
           pendingWorkerRejectsRef.current.delete(rejectRequest)
           callback()
         }
         const rejectRequest = (error: Error) => settle(() => reject(error))
-        const timeout = window.setTimeout(() => {
-          rejectRequest(new Error("Worker timed out before returning a result."))
-        }, WORKER_TIMEOUT_MS)
-
         const listener = (event: MessageEvent<WorkerResponse>) => {
           const response = event.data
           if (response.id !== request.id) {
