@@ -304,6 +304,12 @@ export default function App() {
       setLogs([])
       const id = ++requestIdRef.current
       const options = override?.options ?? { source, preset, luaVersion, prettyPrint, seed }
+      if (options.source.includes("-- This File Was Protected By Neji Obf https://dsc.gg/nejihub")) {
+        const message = "Input đã là file Neji Obf. Hãy dùng mã nguồn gốc, không obfuscate lại output đã mã hoá để tránh hỏng chuỗi runtime."
+        setLogs([{ level: "error", message }])
+        toast.error("Input đã được obfuscate")
+        return
+      }
       const request: WorkerRequest = {
         id,
         action: "obfuscate",
