@@ -156,4 +156,38 @@ return {
 			{ Name = "WrapInFunction", Settings = {} },
 		},
 	},
+
+	-- LuaU profile for Roblox/Luau sources. Avoids Lua 5.1-only transforms.
+	["LuaU"] = {
+		LuaVersion = "LuaU",
+		VarNamePrefix = "",
+		NameGenerator = "MangledShuffled",
+		PrettyPrint = false,
+		Seed = 0,
+		Steps = {
+			{ Name = "EncryptStrings", Settings = {} },
+			{ Name = "SplitStrings", Settings = { Threshold = 1, MinLength = 3, MaxLength = 7, ConcatenationType = "strcat" } },
+			{ Name = "ConstantArray", Settings = { Threshold = 1, StringsOnly = true, Shuffle = true, Rotate = true, Encoding = "mixed" } },
+			{ Name = "NumbersToExpressions", Settings = { NumberRepresentationMutation = true } },
+		},
+	},
+
+	-- Maximum stable profile. Strong transforms with additional indirection.
+	["Maximum"] = {
+		LuaVersion = "Lua51",
+		VarNamePrefix = "",
+		NameGenerator = "MangledShuffled",
+		PrettyPrint = false,
+		Seed = 0,
+		Steps = {
+			{ Name = "EncryptStrings", Settings = {} },
+			{ Name = "SplitStrings", Settings = { Threshold = 1, MinLength = 2, MaxLength = 5, ConcatenationType = "custom", CustomFunctionType = "inline" } },
+			{ Name = "AntiTamper", Settings = { UseDebug = false } },
+			{ Name = "Vmify", Settings = {} },
+			{ Name = "ConstantArray", Settings = { Threshold = 1, StringsOnly = true, Shuffle = true, Rotate = true, Encoding = "mixed", LocalWrapperThreshold = 0 } },
+			{ Name = "NumbersToExpressions", Settings = { NumberRepresentationMutation = true } },
+			{ Name = "AddVararg", Settings = {} },
+			{ Name = "WrapInFunction", Settings = {} },
+		},
+	},
 }
