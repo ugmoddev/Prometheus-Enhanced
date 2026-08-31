@@ -222,7 +222,7 @@ function Pipeline:apply(code, filename)
 
 	logger:info(string.format("Generated Code size is %.2f%% of the Source Code size", (string.len(code) / sourceLen)*100))
 
-	return "-- This File Was Protected By Neji Obf https://dsc.gg/nejihub\n" .. code;
+	return "-- This File Was Protected By Neji Obf https://dsc.gg/nejihub\n\n" .. code;
 end
 
 function Pipeline:unparse(ast)
