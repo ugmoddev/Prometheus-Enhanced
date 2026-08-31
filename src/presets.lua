@@ -23,7 +23,8 @@ return {
 		PrettyPrint = false,
 		Seed = 0,
 		Steps = {
-			{ Name = "Vmify", Settings = {} },
+                { Name = "EncryptStrings", Settings = {} },
+                { Name = "SplitStrings", Settings = { Threshold = 0.75, MinLength = 4, MaxLength = 8, ConcatenationType = "strcat" } },
 			{
 				Name = "ConstantArray",
 				Settings = {
@@ -59,6 +60,7 @@ return {
 		Seed = 0,
 		Steps = {
 			{ Name = "EncryptStrings", Settings = {} },
+                { Name = "SplitStrings", Settings = { Threshold = 0.85, MinLength = 3, MaxLength = 7, ConcatenationType = "strcat" } },
 			{
 				Name = "AntiTamper",
 				Settings = {
@@ -75,8 +77,8 @@ return {
 					Rotate = true,
 					LocalWrapperThreshold = 0,
 				},
-			},
-			{ Name = "NumbersToExpressions", Settings = {} },
+                },
+                { Name = "NumbersToExpressions", Settings = { Threshold = 0.75, NumberRepresentationMutation = true } },
 			{ Name = "WrapInFunction", Settings = {} },
 		},
 	},
@@ -90,6 +92,7 @@ return {
 		Seed = 0,
 		Steps = {
 			{ Name = "Vmify", Settings = {} },
+                { Name = "SplitStrings", Settings = { Threshold = 1, MinLength = 2, MaxLength = 6, ConcatenationType = "strcat" }, },
 			{ Name = "EncryptStrings", Settings = {} },
 			{
 				Name = "AntiTamper",
