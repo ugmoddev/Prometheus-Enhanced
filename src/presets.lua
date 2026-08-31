@@ -117,4 +117,43 @@ return {
 			{ Name = "WrapInFunction", Settings = {} },
 		},
 	},
+
+	-- Extreme obfuscation. Maximum built-in protection and highest runtime overhead.
+	["Extreme"] = {
+		LuaVersion = "Lua51",
+		VarNamePrefix = "",
+		NameGenerator = "MangledShuffled",
+		PrettyPrint = false,
+		Seed = 0,
+		Steps = {
+			{ Name = "EncryptStrings", Settings = {} },
+			{
+				Name = "SplitStrings",
+				Settings = {
+					Threshold = 1,
+					MinLength = 3,
+					MaxLength = 7,
+					ConcatenationType = "custom",
+					CustomFunctionType = "local",
+					CustomLocalFunctionsCount = 2,
+				},
+			},
+			{ Name = "AntiTamper", Settings = { UseDebug = false } },
+			{ Name = "Vmify", Settings = {} },
+			{
+				Name = "ConstantArray",
+				Settings = {
+					Threshold = 1,
+					StringsOnly = true,
+					Shuffle = true,
+					Rotate = true,
+					Encoding = "mixed",
+					LocalWrapperThreshold = 0,
+				},
+			},
+			{ Name = "NumbersToExpressions", Settings = { NumberRepresentationMutation = true } },
+			{ Name = "AddVararg", Settings = {} },
+			{ Name = "WrapInFunction", Settings = {} },
+		},
+	},
 }
