@@ -11,7 +11,8 @@ local function script_path()
 end
 package.path = script_path() .. "?.lua;" .. package.path
 
-local INSTALL_SCRIPT_URL = "https://raw.githubusercontent.com/prometheus-lua/Prometheus/master/install.sh"
+local INSTALL_SCRIPT_URL = "https://raw.githubusercontent.com/ugmoddev/Prometheus-Enhanced/master/install.sh"
+local CLI_VERSION = "v0.3.0"
 
 local function run_shell(command)
 	local ok = os.execute(command)
@@ -29,7 +30,7 @@ local function get_version()
 	if version and version ~= "" then
 		return version
 	end
-	return "dev"
+	return CLI_VERSION
 end
 
 local function print_help()
@@ -127,6 +128,32 @@ local function lines_from(file)
 	return lines
 end
 
+local function require_value(option, value)
+	if value == nil or value == "" or value:sub(1, 2) == "--" then
+		Prometheus.Logger:error(string.format('The option "%s" requires a value.', option))
+	end
+	return value
+end
+
+local function write_file(filename, content)
+	local temporary = filename .. ".tmp." .. tostring(os.time())
+	local handle, err = io.open(temporary, "wb")
+	if not handle then
+		Prometheus.Logger:error(string.format('Could not open output file "%s": %s', filename, tostring(err)))
+	end
+	local ok, writeErr = handle:write(content)
+	handle:close()
+	if not ok then
+		os.remove(temporary)
+		Prometheus.Logger:error(string.format('Could not write output file "%s": %s', filename, tostring(writeErr)))
+	end
+	local renamed, renameErr = os.rename(temporary, filename)
+	if not renamed then
+		os.remove(temporary)
+		Prometheus.Logger:error(string.format('Could not replace output file "%s": %s', filename, tostring(renameErr)))
+	end
+end
+
 local function load_chunk(content, chunkName, environment)
 	if type(loadstring) == "function" then
 		local func, err = loadstring(content, chunkName)
@@ -165,15 +192,16 @@ local function run_cli()
 				end
 
 				i = i + 1
-				local preset = Prometheus.Presets[arg[i]]
+				local presetName = require_value(curr, arg[i])
+				local preset = Prometheus.Presets[presetName]
 				if not preset then
-					Prometheus.Logger:error(string.format('A Preset with the name "%s" was not found!', tostring(arg[i])))
+					Prometheus.Logger:error(string.format('A Preset with the name "%s" was not found!', tostring(presetName)))
 				end
 
 				config = preset
-			elseif curr == "--config" or curr == "--c" then
-				i = i + 1
-				local filename = tostring(arg[i])
+				elseif curr == "--config" or curr == "--c" then
+					i = i + 1
+					local filename = tostring(require_value(curr, arg[i]))
 				if not file_exists(filename) then
 					Prometheus.Logger:error(string.format('The config file "%s" was not found!', filename))
 				end
@@ -187,10 +215,10 @@ local function run_cli()
 				config = func()
 			elseif curr == "--out" or curr == "--o" then
 				i = i + 1
-				if outFile then
-					Prometheus.Logger:warn("The output file was specified multiple times!")
-				end
-				outFile = arg[i]
+					if outFile then
+						Prometheus.Logger:warn("The output file was specified multiple times!")
+					end
+					outFile = require_value(curr, arg[i])
 			elseif curr == "--nocolors" then
 				Prometheus.colors.enabled = false
 			elseif curr == "--Lua51" then
@@ -236,8 +264,13 @@ local function run_cli()
 	end
 
 	-- Add Option to override Lua Version
-	config.LuaVersion = luaVersion or config.LuaVersion
-	config.PrettyPrint = prettyPrint ~= nil and prettyPrint or config.PrettyPrint
+		-- Clone the selected config so CLI overrides never mutate a shared preset.
+		local effectiveConfig = {}
+		for key, value in pairs(config) do
+			effectiveConfig[key] = value
+		end
+		effectiveConfig.LuaVersion = luaVersion or effectiveConfig.LuaVersion
+		effectiveConfig.PrettyPrint = prettyPrint ~= nil and prettyPrint or effectiveConfig.PrettyPrint
 
 	if not file_exists(sourceFile) then
 		Prometheus.Logger:error(string.format('The File "%s" was not found!', sourceFile))
@@ -252,14 +285,12 @@ local function run_cli()
 	end
 
 	local source = table.concat(lines_from(sourceFile), "\n")
-	local pipeline = Prometheus.Pipeline:fromConfig(config)
+		local pipeline = Prometheus.Pipeline:fromConfig(effectiveConfig)
 	local out = pipeline:apply(source, sourceFile)
 	Prometheus.Logger:info(string.format('Writing output to "%s"', outFile))
 
-	-- Write Output
-	local handle = io.open(outFile, "w")
-	handle:write(out)
-	handle:close()
+		-- Write atomically to avoid leaving a truncated output after an interrupted run.
+		write_file(outFile, out)
 end
 
 local ok, err = xpcall(run_cli, function(e)

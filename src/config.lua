@@ -5,8 +5,8 @@
 -- In this Script, some Global config Variables are defined
 
 local NAME = "Prometheus";
-local REVISION = "Alpha";
-local VERSION = "v0.2";
+local REVISION = "Beta";
+local VERSION = "v0.3.0";
 local BY = "levno-710";
 
 for _, currArg in pairs(arg) do

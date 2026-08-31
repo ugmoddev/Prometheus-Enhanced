@@ -1,8 +1,8 @@
 <div align="center">
 
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=180&color=gradient&text=Prometheus&fontAlign=50&fontAlignY=35&fontSize=42&desc=Lua%20Obfuscator%20%E2%80%A2%20AST%20Transformations%20%E2%80%A2%20Control%20Flow%20Obfuscation&descAlign=50&descAlignY=60" />
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&height=180&color=gradient&text=Prometheus%20Enhanced&fontAlign=50&fontAlignY=35&fontSize=42&desc=Lua%20Obfuscator%20%E2%80%A2%20Safer%20CLI%20%E2%80%A2%20AST%20Transformations&descAlign=50&descAlignY=60" />
 
-<a href="https://github.com/prometheus-lua/Prometheus">
+<a href="https://github.com/ugmoddev/Prometheus-Enhanced">
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=24&duration=2500&pause=900&center=true&vCenter=true&width=760&lines=Pure+Lua+Obfuscation;AST+Transforms+%E2%80%A2+Encryption+%E2%80%A2+Anti-Tamper;Lua+5.1+and+LuaU+support;Built+for+code+protection" alt="Typing SVG" />
 </a>
 
@@ -11,11 +11,11 @@
 <a href="https://prometheus-lua.github.io/Prometheus/">
   <img src="https://img.shields.io/badge/Playground-Try%20Out-0F766E?style=for-the-badge&logo=github&logoColor=white" alt="Open Prometheus Playground" />
 </a>
-<a href="https://github.com/prometheus-lua/Prometheus/actions/workflows/Test.yml">
-  <img src="https://img.shields.io/github/actions/workflow/status/prometheus-lua/Prometheus/Test.yml?branch=master&style=for-the-badge&label=Tests" alt="Tests" />
+<a href="https://github.com/ugmoddev/Prometheus-Enhanced/actions/workflows/Test.yml">
+  <img src="https://img.shields.io/github/actions/workflow/status/ugmoddev/Prometheus-Enhanced/Test.yml?branch=master&style=for-the-badge&label=Tests" alt="Tests" />
 </a>
-<a href="https://github.com/prometheus-lua/Prometheus/stargazers">
-  <img src="https://img.shields.io/github/stars/prometheus-lua/Prometheus?style=for-the-badge&logo=github&label=Stars" alt="GitHub stars" />
+<a href="https://github.com/ugmoddev/Prometheus-Enhanced/stargazers">
+  <img src="https://img.shields.io/github/stars/ugmoddev/Prometheus-Enhanced?style=for-the-badge&logo=github&label=Stars" alt="GitHub stars" />
 </a>
 <a href="https://discord.gg/U8h4d4Rf64">
   <img src="https://img.shields.io/badge/Discord-Join%20Server-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord server" />
@@ -29,7 +29,9 @@
   <img src="assets/readme/obfuscation-preview.gif" alt="Prometheus obfuscation process preview" width="900" />
 </p>
 
-**Prometheus** is a Lua obfuscator written in pure Lua.
+**Prometheus Enhanced** is an independently maintained upgrade of the Prometheus Lua obfuscator.
+
+This fork preserves the upstream transformation pipeline while improving CLI safety and release ergonomics. It is based on [Prometheus by Elias Oelschner](https://github.com/prometheus-lua/Prometheus).
 
 It applies a range of **AST-based transformations** to make source code significantly harder to read, analyze, and reverse engineer.  
 These include techniques such as **control-flow flattening**, **constant encryption**, and other Lua-specific obfuscation strategies.
@@ -58,7 +60,7 @@ Try the browser version first:
 Install latest release with one command:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/prometheus-lua/Prometheus/master/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/ugmoddev/Prometheus-Enhanced/master/install.sh | sh
 ```
 
 Then use the CLI directly:
@@ -84,7 +86,7 @@ rm -f ~/.local/bin/prometheus-lua && rm -rf ~/.local/share/prometheus-lua
 ### Local source usage
 
 ```bash
-git clone https://github.com/prometheus-lua/Prometheus.git
+git clone https://github.com/ugmoddev/Prometheus-Enhanced.git
 cd Prometheus
 lua cli.lua --preset Medium ./your_file.lua
 ```

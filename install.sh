@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-REPO="prometheus-lua/Prometheus"
+REPO="ugmoddev/Prometheus-Enhanced"
 INSTALL_BASE="${PROMETHEUS_LUA_HOME:-$HOME/.local/share/prometheus-lua}"
 BIN_DIR="${PROMETHEUS_LUA_BIN:-$HOME/.local/bin}"
 

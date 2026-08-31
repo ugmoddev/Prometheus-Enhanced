@@ -8,6 +8,22 @@ on:
       - master
 
 jobs:
+  cli-smoke:
+    name: CLI smoke checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Install Lua 5.1
+        run: sudo apt-get update && sudo apt-get install -y lua5.1
+      - name: Check help and version
+        run: |
+          lua5.1 cli.lua --help >/dev/null
+          lua5.1 cli.lua --version | grep -q 'Prometheus v0.3.0'
+      - name: Check missing option values fail clearly
+        run: |
+          if lua5.1 cli.lua --preset >/tmp/cli-error.txt 2>&1; then exit 1; fi
+          grep -q 'requires a value' /tmp/cli-error.txt
   test-docker:
     runs-on: ubuntu-latest
     steps:
