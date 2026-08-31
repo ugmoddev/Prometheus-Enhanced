@@ -69,6 +69,17 @@ function downloadLua(output: string) {
   URL.revokeObjectURL(url)
 }
 
+function downloadErrorLog(logs: PrometheusLog[]) {
+  const content = logs.map((log) => `[${log.level.toUpperCase()}] ${log.message}`).join("\n") + "\n"
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = "prometheus.error.log"
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 function formatWorkerError(event: ErrorEvent): string {
   const location =
     event.filename && event.lineno
@@ -201,6 +212,7 @@ export default function App() {
   }, [])
 
   const canExport = output.trim().length > 0
+  const canExportLogs = logs.length > 0
   const isBusy = activeJob !== "idle"
   const isObfuscating = activeJob === "obfuscate"
   const isRunningInput = activeJob === "run-input"
@@ -349,12 +361,10 @@ export default function App() {
         seed: options.seed,
         outputHash: null,
       })
-      setOutput("")
       setLogs([...result.logs, { level: "error", message: result.error }])
       toast.error("Obfuscation failed")
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
-      setOutput("")
       setLogs((current) => [...current, { level: "error", message }])
       toast.error("Obfuscation failed")
     } finally {
@@ -615,6 +625,14 @@ export default function App() {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Share link</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" onClick={() => downloadErrorLog(logs)} disabled={!canExportLogs} aria-label="Download error log">
+                    <FileCode2 />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Download error log</TooltipContent>
               </Tooltip>
             </div>
             {preset === "Strong" ? (
