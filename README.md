@@ -8,7 +8,7 @@
 
 <br/>
 
-<a href="https://prometheus-lua.github.io/Prometheus/">
+<a href="https://ugmoddev.github.io/Prometheus-Enhanced/">
   <img src="https://img.shields.io/badge/Playground-Try%20Out-0F766E?style=for-the-badge&logo=github&logoColor=white" alt="Open Prometheus Playground" />
 </a>
 <a href="https://github.com/ugmoddev/Prometheus-Enhanced/actions/workflows/Test.yml">
@@ -51,7 +51,7 @@ Currently, Prometheus supports:
 Try the browser version first:
 
 
-<a href="https://prometheus-lua.github.io/Prometheus/">
+<a href="https://ugmoddev.github.io/Prometheus-Enhanced/">
   <img src="https://img.shields.io/badge/Playground-Try%20Out-0F766E?style=for-the-badge&logo=github&logoColor=white" alt="Open Prometheus Playground" />
 </a>
 
